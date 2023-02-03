@@ -21,3 +21,16 @@ as 8-bit chunks in little-endian order.
  */
 uint64_t dram_load(DRAM* dram, uint64_t addr, uint64_t size);
 void dram_store(DRAM* dram, uint64_t addr, uint64_t size, uint64_t value);
+
+
+/*
+------ Memory BUS -------
+A data connector allowing data transfer between DRAM and CPU.
+*/
+
+typedef struct{
+    DRAM *dram;
+}BUS;
+
+uint64_t bus_load(BUS* bus, uint64_t addr, uint64_t size);
+void bus_store(BUS* bus, uint64_t addr, uint64_t size, uint64_t value);

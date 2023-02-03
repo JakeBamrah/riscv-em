@@ -5,7 +5,7 @@
 void dram_store_8(DRAM *dram, uint64_t addr, uint64_t value) {
     /*
     AND with 0xff 8 (1's) to extract and store value
-    lower byte (1-byte) stored first at lower address space (little-endiam)
+    lower byte (1-byte) stored first at lower address space (little-endian)
     remember DRAM_BASE == mem[0]—subtract from address to get address data
     */
     dram->mem[addr - DRAM_BASE] = (uint8_t) (value & 0xff);
