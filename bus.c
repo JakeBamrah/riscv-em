@@ -8,5 +8,5 @@ uint64_t bus_load(BUS *bus, uint64_t addr, uint64_t size) {
 }
 
 void bus_store(BUS *bus, uint64_t addr, uint64_t size, uint64_t value) {
-    return dram_store(bus->dram, addr, size, value);
+    dram_store(bus->dram, addr, size, value);
 }
