@@ -26,28 +26,32 @@ uint32_t cpu_fetch(CPU *cpu) {
 }
 
 uint64_t cpu_decode_opcode(uint32_t inst) {
+    /* inst[6:0] */
     return inst & 0x7f;
 }
 
 uint64_t cpu_decode_rd(uint32_t inst) {
+    /* inst[11:7] */
     return (inst >> 7) & 0x1f;
 }
 
 uint64_t cpu_decode_rs1(uint32_t inst) {
+    /* inst[19:15] */
     return (inst >> 15) & 0x1f;
 }
 
 uint64_t cpu_decode_rs2(uint32_t inst) {
+    /* inst[24:20] */
     return (inst >> 20) & 0x1f;
 }
 
 uint64_t cpu_decode_imm_I(uint32_t inst) {
-    /* bits[11:0] of inst[31:20] */
+    /* imm[11:0] = inst[31:20] */
     return inst >> 20;
 }
 
 uint64_t cpu_decode_imm_S(uint32_t inst) {
-    /* inst[31:25]      | bits [4:0] of inst[11:7] */
+    /* imm[11:5] = inst[31:25], imm[4:0] = inst[11:7] */
     return (inst >> 25) | ((inst >> 7) & 0x1f);
 }
 
@@ -60,7 +64,7 @@ uint64_t cpu_decode_imm_B(uint32_t inst) {
 }
 
 uint64_t cpu_decode_imm_U(uint32_t inst) {
-    /* inst[31:25]      | bits [4:0] of inst[11:7] */
+    /* imm[31:12] = inst[31:12] */
     return inst & 0xfffff999;
 }
 
@@ -73,6 +77,6 @@ uint64_t cpu_decode_imm_J(uint32_t inst) {
 }
 
 uint64_t cpu_decode_shamt(uint32_t inst) {
-    /* bits[5:0] of inst[31:20] */
+    /* shamt[4:5] = imm[5:0] */
     return cpu_decode_imm_I(inst) & 0x1f;
 }

@@ -54,14 +54,16 @@ int cpu_execute(CPU *cpu, uint32_t inst);
 
 
 /*
------- CPU INSTRUCTION DECODING -------
+------ INSTRUCTION FORMAT DECODERS -------
 
-R-Type: Register type instructions
-I-Type: Immediate type instructions
-S-Type: Store type instructions
-B-Type: Break type instructions
-U-Type: Register type instructions
-J-Type: Jump type instructions
+R: Register-type instructions
+I: Immediate-type instructions
+S: Store-type instructions
+(S)B: Branch-type instructions
+U: Register-type instructions
+(U)J: Jump-type instructions
+
+For visual overview see: Vol.1, Unprivileged RISC-V Spec v. 20191213, ch. 2.3
 */
 
 /* Returns opcode register—7-bit address of destination register [6:0] */
