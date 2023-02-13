@@ -40,7 +40,7 @@ void bus_store(BUS* bus, uint64_t addr, uint64_t size, uint64_t value);
 typedef struct{
     uint64_t registers[32];
     uint64_t program_counter;
-    BUS bus;
+    BUS *bus;
 }CPU;
 
 /* Initializes CPU registers and aligns program-counter with start of DRAM */
