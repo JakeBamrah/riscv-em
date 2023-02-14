@@ -30,13 +30,14 @@ uint32_t cpu_fetch(CPU *cpu) {
 void cpu_exec_ADDI(CPU *cpu, uint32_t inst) {
     uint64_t imm = cpu_decode_imm_I(inst);
     cpu->registers[cpu_decode_rd(inst)] = cpu->registers[cpu_decode_rs1(inst)] + (int64_t) imm;
-    printf("addi");
+    printf("addi\n");
 }
 
 void cpu_exec_ADD(CPU *cpu, uint32_t inst) {
     uint64_t rs1 = cpu_decode_rs1(inst);
     uint64_t rs2 = cpu_decode_rs2(inst);
     cpu->registers[cpu_decode_rd(inst)] = cpu->registers[rs1] + cpu->registers[rs2];
+    printf("add\n");
 }
 
 void cpu_exec_SUB(CPU *cpu, uint32_t inst) {
@@ -124,9 +125,10 @@ int32_t cpu_execute(CPU *cpu, uint32_t inst) {
                 "[-] ERROR-> opcode:0x%x, funct3:0x%x, funct3:0x%x\n",
                 opcode, funct3, funct7
             );
+            return 0;
     }
 
-    return 0;
+    return 1;
 }
 
 uint64_t cpu_decode_rd(uint32_t inst) {
@@ -180,4 +182,24 @@ uint64_t cpu_decode_imm_J(uint32_t inst) {
 uint64_t cpu_decode_shamt(uint32_t inst) {
     /* shamt[4:5] = imm[5:0] */
     return cpu_decode_imm_I(inst) & 0x1f;
+}
+
+void cpu_dump_registers(CPU *cpu) {
+    char *abi_registers[] = {
+        "zero", "ra",  "sp",  "gp",
+          "tp", "t0",  "t1",  "t2",
+          "s0", "s1",  "a0",  "a1",
+          "a2", "a3",  "a4",  "a5",
+          "a6", "a7",  "s2",  "s3",
+          "s4", "s5",  "s6",  "s7",
+          "s8", "s9", "s10", "s11",
+          "t3", "t4",  "t5",  "t6",
+    };
+
+    for (int i=0; i<8; i++) {
+        printf("   %4s: %#-16.2lx  ", abi_registers[i],    cpu->registers[i]);
+        printf("   %2s: %#-16.2lx  ", abi_registers[i+8],  cpu->registers[i+8]);
+        printf("   %2s: %#-16.2lx  ", abi_registers[i+16], cpu->registers[i+16]);
+        printf("   %3s: %#-16.2lx\n", abi_registers[i+24], cpu->registers[i+24]);
+    }
 }

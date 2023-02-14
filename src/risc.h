@@ -52,6 +52,8 @@ uint32_t cpu_fetch(CPU *cpu);
 /* A basic ALU and decoder—decodes a fetched instruction and executes it */
 int cpu_execute(CPU *cpu, uint32_t inst);
 
+void cpu_dump_registers(CPU *cpu);
+
 
 /*
 ------ INSTRUCTION FORMAT DECODERS -------
