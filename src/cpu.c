@@ -27,23 +27,83 @@ uint32_t cpu_fetch(CPU *cpu) {
     return inst;
 }
 
-void cpu_exec_ADDI(CPU *cpu, uint32_t inst) {
-    uint64_t imm = cpu_decode_imm_I(inst);
-    cpu->registers[cpu_decode_rd(inst)] = cpu->registers[cpu_decode_rs1(inst)] + (int64_t) imm;
-    printf("addi\n");
-}
+
+/* ------ INSTRUCTION EXECUTORS ------- */
 
 void cpu_exec_ADD(CPU *cpu, uint32_t inst) {
-    uint64_t rs1 = cpu_decode_rs1(inst);
-    uint64_t rs2 = cpu_decode_rs2(inst);
-    cpu->registers[cpu_decode_rd(inst)] = cpu->registers[rs1] + cpu->registers[rs2];
+    int64_t rs1 = cpu->registers[cpu_decode_rs1(inst)];
+    int64_t rs2 = cpu->registers[cpu_decode_rs2(inst)];
+    cpu->registers[cpu_decode_rd(inst)] = (uint64_t)(rs1 + rs2);
     printf("add\n");
 }
 
 void cpu_exec_SUB(CPU *cpu, uint32_t inst) {
+    int64_t rs1 = cpu->registers[cpu_decode_rs1(inst)];
+    int64_t rs2 = cpu->registers[cpu_decode_rs2(inst)];
+    cpu->registers[cpu_decode_rd(inst)] = (uint64_t)(rs1 - rs2);
+    printf("sub\n");
+}
+
+void cpu_exec_SLL(CPU *cpu, uint32_t inst) {
     uint64_t rs1 = cpu_decode_rs1(inst);
     uint64_t rs2 = cpu_decode_rs2(inst);
-    cpu->registers[cpu_decode_rd(inst)] = cpu->registers[rs1] - cpu->registers[rs2];
+    cpu->registers[cpu_decode_rd(inst)] = cpu->registers[rs1] << (int64_t)cpu->registers[rs2];
+    printf("sll\n");
+}
+
+void cpu_exec_SLT(CPU *cpu, uint32_t inst) {
+    uint64_t rs1 = cpu_decode_rs1(inst);
+    uint64_t rs2 = cpu_decode_rs2(inst);
+    cpu->registers[cpu_decode_rd(inst)] = (cpu->registers[rs1] < (int64_t)cpu->registers[rs2]) ? 1: 0;
+    printf("slt\n");
+}
+
+void cpu_exec_SLTU(CPU *cpu, uint32_t inst) {
+    uint64_t rs1 = cpu_decode_rs1(inst);
+    uint64_t rs2 = cpu_decode_rs2(inst);
+    cpu->registers[cpu_decode_rd(inst)] = (cpu->registers[rs1] < cpu->registers[rs2]) ? 1: 0;
+    printf("sltu\n");
+}
+
+void cpu_exec_XOR(CPU *cpu, uint32_t inst) {
+    uint64_t rs1 = cpu_decode_rs1(inst);
+    uint64_t rs2 = cpu_decode_rs2(inst);
+    cpu->registers[cpu_decode_rd(inst)] = cpu->registers[rs1] ^ cpu->registers[rs2];
+    printf("xor\n");
+}
+
+void cpu_exec_SRL(CPU *cpu, uint32_t inst) {
+    uint64_t rs1 = cpu_decode_rs1(inst);
+    uint64_t rs2 = cpu_decode_rs2(inst);
+    cpu->registers[cpu_decode_rd(inst)] = cpu->registers[rs1] >> (int64_t)cpu->registers[rs2];
+    printf("srl\n");
+}
+
+void cpu_exec_SRA(CPU *cpu, uint32_t inst) {
+    uint64_t rs1 = cpu_decode_rs1(inst);
+    uint64_t rs2 = cpu_decode_rs2(inst);
+    cpu->registers[cpu_decode_rd(inst)] = (int32_t)cpu->registers[rs1] >> (int64_t)cpu->registers[rs2];
+    printf("sra\n");
+}
+
+void cpu_exec_OR(CPU *cpu, uint32_t inst) {
+    uint64_t rs1 = cpu_decode_rs1(inst);
+    uint64_t rs2 = cpu_decode_rs2(inst);
+    cpu->registers[cpu_decode_rd(inst)] = cpu->registers[rs1] | cpu->registers[rs2];
+    printf("or\n");
+}
+
+void cpu_exec_AND(CPU *cpu, uint32_t inst) {
+    uint64_t rs1 = cpu_decode_rs1(inst);
+    uint64_t rs2 = cpu_decode_rs2(inst);
+    cpu->registers[cpu_decode_rd(inst)] = cpu->registers[rs1] & cpu->registers[rs2];
+    printf("and\n");
+}
+
+void cpu_exec_ADDI(CPU *cpu, uint32_t inst) {
+    uint64_t imm = cpu_decode_imm_I(inst);
+    cpu->registers[cpu_decode_rd(inst)] = cpu->registers[cpu_decode_rs1(inst)] + (int64_t)imm;
+    printf("addi\n");
 }
 
 int32_t cpu_execute(CPU *cpu, uint32_t inst) {
@@ -65,28 +125,26 @@ int32_t cpu_execute(CPU *cpu, uint32_t inst) {
                             cpu_exec_SUB(cpu, inst); break;
                         default: ;
                     } break;
-
                 case SLL:
-                    break;
+                    cpu_exec_SLL(cpu, inst); break;
                 case SLT:
-                    break;
+                    cpu_exec_SLT(cpu, inst); break;
                 case SLTU:
-                    break;
+                    cpu_exec_SLTU(cpu, inst); break;
                 case XOR:
-                    break;
+                    cpu_exec_XOR(cpu, inst); break;
                 case SR:
                     switch (funct7) {
                         case SRL:
-                            break;
+                            cpu_exec_SRL(cpu, inst); break;
                         case SRA:
-                            break;
+                            cpu_exec_SRA(cpu, inst); break;
                         default: ;
                     } break;
-
                 case OR:
-                    break;
+                    cpu_exec_OR(cpu, inst); break;
                 case AND:
-                    break;
+                    cpu_exec_AND(cpu, inst); break;
                 default: ;
             } break;
 
@@ -130,6 +188,9 @@ int32_t cpu_execute(CPU *cpu, uint32_t inst) {
 
     return 1;
 }
+
+
+/* ------ INSTRUCTION DECODERS ------- */
 
 uint64_t cpu_decode_rd(uint32_t inst) {
     /* inst[11:7] */
