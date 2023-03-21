@@ -102,8 +102,74 @@ void cpu_exec_AND(CPU *cpu, uint32_t inst) {
 
 void cpu_exec_ADDI(CPU *cpu, uint32_t inst) {
     uint64_t imm = cpu_decode_imm_I(inst);
-    cpu->registers[cpu_decode_rd(inst)] = cpu->registers[cpu_decode_rs1(inst)] + (int64_t)imm;
+    uint64_t rs1 = cpu_decode_rs1(inst);
+    uint64_t rd = cpu_decode_rd(inst);
+    cpu->registers[rd] = cpu->registers[rs1] + (int64_t)imm;
     printf("addi\n");
+}
+
+void cpu_exec_SLLI(CPU* cpu, uint32_t inst) {
+    uint64_t rs1 = cpu_decode_rs1(inst);
+    uint64_t shamt = cpu_decode_shamt(inst);
+    uint64_t rd = cpu_decode_rd(inst);
+    cpu->registers[rd] = cpu->registers[rs1] << shamt;
+    printf("slli\n");
+}
+
+void cpu_exec_SLTI(CPU* cpu, uint32_t inst) {
+    uint64_t imm = cpu_decode_imm_I(inst);
+    uint64_t rs1 = cpu_decode_rs1(inst);
+    uint64_t rd = cpu_decode_rd(inst);
+    cpu->registers[rd] = (cpu->registers[rs1] < (int64_t)imm) ? 1 : 0;
+    printf("slti\n");
+}
+
+void cpu_exec_SLTIU(CPU* cpu, uint32_t inst) {
+    uint64_t imm = cpu_decode_imm_I(inst);
+    uint64_t rs1 = cpu_decode_rs1(inst);
+    uint64_t rd = cpu_decode_rd(inst);
+    cpu->registers[rd] = (cpu->registers[rs1] < imm) ? 1 : 0;
+    printf("sltiu\n");
+}
+
+void cpu_exec_XORI(CPU* cpu, uint32_t inst) {
+    uint64_t imm = cpu_decode_imm_I(inst);
+    uint64_t rs1 = cpu_decode_rs1(inst);
+    uint64_t rd = cpu_decode_rd(inst);
+    cpu->registers[rd] = cpu->registers[rs1] ^ imm;
+    printf("xori\n");
+}
+
+void cpu_exec_SRLI(CPU* cpu, uint32_t inst) {
+    uint64_t imm = cpu_decode_imm_I(inst);
+    uint64_t rs1 = cpu_decode_rs1(inst);
+    uint64_t rd = cpu_decode_rd(inst);
+    cpu->registers[rd] = cpu->registers[rs1] >> imm;
+    printf("srli\n");
+}
+
+void cpu_exec_SRAI(CPU* cpu, uint32_t inst) {
+    uint64_t imm = cpu_decode_imm_I(inst);
+    uint64_t rs1 = cpu_decode_rs1(inst);
+    uint64_t rd = cpu_decode_rd(inst);
+    cpu->registers[rd] = (int32_t)cpu->registers[rs1] >> imm;
+    printf("srai\n");
+}
+
+void cpu_exec_ORI(CPU* cpu, uint32_t inst) {
+    uint64_t imm = cpu_decode_imm_I(inst);
+    uint64_t rs1 = cpu_decode_rs1(inst);
+    uint64_t rd = cpu_decode_rd(inst);
+    cpu->registers[rd] = cpu->registers[rs1] | imm;
+    printf("ori\n");
+}
+
+void cpu_exec_ANDI(CPU* cpu, uint32_t inst) {
+    uint64_t imm = cpu_decode_imm_I(inst);
+    uint64_t rs1 = cpu_decode_rs1(inst);
+    uint64_t rd = cpu_decode_rd(inst);
+    cpu->registers[rd] = cpu->registers[rs1] & imm;
+    printf("andi\n");
 }
 
 int32_t cpu_execute(CPU *cpu, uint32_t inst) {
@@ -151,29 +217,28 @@ int32_t cpu_execute(CPU *cpu, uint32_t inst) {
         case I_TYPE:
             switch (funct3) {
                 case ADDI:
-                    cpu_exec_ADDI(cpu, inst);
-                    break;
+                    cpu_exec_ADDI(cpu, inst); break;
                 case SLLI:
-                    break;
+                    cpu_exec_SLLI(cpu, inst); break;
                 case SLTI:
-                    break;
+                    cpu_exec_SLTI(cpu, inst); break;
                 case SLTIU:
-                    break;
+                    cpu_exec_SLTIU(cpu, inst); break;
                 case XORI:
-                    break;
+                    cpu_exec_XORI(cpu, inst); break;
                 case SRI:
                     switch (funct7) {
                         case SRLI:
-                            break;
+                            cpu_exec_SRLI(cpu, inst); break;
                         case SRAI:
-                            break;
+                            cpu_exec_SRAI(cpu, inst); break;
                         default: ;
                     } break;
 
                 case ORI:
-                    break;
+                    cpu_exec_ORI(cpu, inst); break;
                 case ANDI:
-                    break;
+                    cpu_exec_ANDI(cpu, inst); break;
                 default: ;
         } break;
 
