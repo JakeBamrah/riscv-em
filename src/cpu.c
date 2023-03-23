@@ -172,6 +172,34 @@ void cpu_exec_ANDI(CPU* cpu, uint32_t inst) {
     printf("andi\n");
 }
 
+void cpu_exec_SB(CPU* cpu, uint32_t inst) {
+    uint64_t imm = cpu_decode_imm_S(inst);
+    uint64_t addr = cpu->registers[cpu_decode_rs1(inst)] + (int64_t)(imm);
+    cpu_store(cpu, addr, 8, cpu->registers[cpu_decode_rs2(inst)]);
+    printf("sb\n");
+}
+
+void cpu_exec_SH(CPU* cpu, uint32_t inst) {
+    uint64_t imm = cpu_decode_imm_S(inst);
+    uint64_t addr = cpu->registers[cpu_decode_rs1(inst)] + (int64_t)(imm);
+    cpu_store(cpu, addr, 16, cpu->registers[cpu_decode_rs2(inst)]);
+    printf("sh\n");
+}
+
+void cpu_exec_SW(CPU* cpu, uint32_t inst) {
+    uint64_t imm = cpu_decode_imm_S(inst);
+    uint64_t addr = cpu->registers[cpu_decode_rs1(inst)] + (int64_t)(imm);
+    cpu_store(cpu, addr, 32, cpu->registers[cpu_decode_rs2(inst)]);
+    printf("sw\n");
+}
+
+void cpu_exec_SD(CPU* cpu, uint32_t inst) {
+    uint64_t imm = cpu_decode_imm_S(inst);
+    uint64_t addr = cpu->registers[cpu_decode_rs1(inst)] + (int64_t)(imm);
+    cpu_store(cpu, addr, 64, cpu->registers[cpu_decode_rs2(inst)]);
+    printf("sd\n");
+}
+
 int32_t cpu_execute(CPU *cpu, uint32_t inst) {
     int opcode = inst & 0x7f;           // inst[6:0]
     int funct3 = (inst >> 12) & 0x7;    // inst[14:12]
@@ -240,7 +268,20 @@ int32_t cpu_execute(CPU *cpu, uint32_t inst) {
                 case ANDI:
                     cpu_exec_ANDI(cpu, inst); break;
                 default: ;
-        } break;
+            } break;
+
+        case S_TYPE:
+            switch (funct3) {
+                case SB:
+                    cpu_exec_SB(cpu, inst); break;
+                case SH:
+                    cpu_exec_SH(cpu, inst); break;
+                case SW:
+                    cpu_exec_SW(cpu, inst); break;
+                case SD:
+                    cpu_exec_SD(cpu, inst); break;
+                default: ;
+            } break;
 
         default:
             fprintf(

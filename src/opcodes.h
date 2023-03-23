@@ -24,7 +24,8 @@
     #define ORI     0x6
     #define ANDI    0x7
 
-
-
-
-
+#define S_TYPE  0x23
+    #define SB      0x0
+    #define SH      0x1
+    #define SW      0x2
+    #define SD      0x3
